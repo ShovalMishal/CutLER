@@ -42,6 +42,7 @@ _PREDEFINED_SPLITS_COCO_CA = {}
 _PREDEFINED_SPLITS_COCO_CA["coco_cls_agnostic"] = {
     "cls_agnostic_coco": ("coco/val2017", "coco/annotations/coco_cls_agnostic_instances_val2017.json"),
     "cls_agnostic_coco20k": ("coco/train2014", "coco/annotations/coco20k_trainval_gt.json"),
+    "cls_agnostic_dota_multiscale_test": ("dota_multiscale/test", "dota_multiscale/annotations/instances_test_class_agnostic.json"),
 }
 
 _PREDEFINED_SPLITS_IMAGENET = {}

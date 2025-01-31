@@ -101,7 +101,7 @@ class CustomCascadeROIHeads(CustomStandardROIHeads):
         assert len(cascade_bbox_reg_weights) == len(cascade_ious)
         assert cfg.MODEL.ROI_BOX_HEAD.CLS_AGNOSTIC_BBOX_REG,  \
             "CustomCascadeROIHeads only support class-agnostic regression now!"
-        assert cascade_ious[0] == cfg.MODEL.ROI_HEADS.IOU_THRESHOLDS[0]
+        # assert cascade_ious[0] == cfg.MODEL.ROI_HEADS.IOU_THRESHOLDS[0]
         # fmt: on
 
         in_channels = [input_shape[f].channels for f in in_features]

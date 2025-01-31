@@ -15,7 +15,7 @@ from collections import OrderedDict
 import pycocotools.mask as mask_util
 import torch
 from pycocotools.coco import COCO
-from pycocotools.cocoeval import COCOeval
+from .cocoeval_myver import COCOeval
 from tabulate import tabulate
 
 import detectron2.utils.comm as comm
@@ -281,9 +281,10 @@ class COCOEvaluator(DatasetEvaluator):
                 else None  # cocoapi does not handle empty results very well
             )
 
-            res = self._derive_coco_results(
-                coco_eval, task, class_names=self._metadata.get("thing_classes")
-            )
+            # res = self._derive_coco_results(
+            #     coco_eval, task, class_names=self._metadata.get("thing_classes")
+            # )
+            res = self._derive_tt1_results(coco_eval, task, class_names=self._metadata.get("thing_classes"))
             self._results[task] = res
 
     def _eval_box_proposals(self, predictions):
@@ -324,6 +325,19 @@ class COCOEvaluator(DatasetEvaluator):
                 res[key] = float(stats["ar"].item() * 100)
         self._logger.info("Proposal metrics: \n" + create_small_table(res))
         self._results["box_proposals"] = res
+
+    def _derive_tt1_results(self, coco_eval, iou_type, class_names=None):
+        if coco_eval is None:
+            self._logger.warn("No predictions from the model!")
+            return None
+        ranks_dict = coco_eval.ranks_dict
+        save_ranks_dict = {}
+        for key, value in ranks_dict.items():
+            new_key = class_names[key-1]
+            save_ranks_dict[new_key] = value
+        with open("/home/shoval/Documents/Repositories/CutLER/cutler/output/ranks_dict_dotav2_ss_wo_gsd.json", 'w') as f:
+            json.dump(save_ranks_dict, f, indent=4)
+        return ranks_dict
 
     def _derive_coco_results(self, coco_eval, iou_type, class_names=None):
         """
@@ -629,9 +643,11 @@ def _evaluate_predictions_on_coco(
             "http://cocodataset.org/#keypoints-eval."
         )
 
-    coco_eval.evaluate()
-    coco_eval.accumulate()
-    coco_eval.summarize()
+    # coco_eval.evaluate()
+    # coco_eval.accumulate()
+    # coco_eval.summarize()
+    coco_eval.evaluate_tt1()
+    coco_eval.save_tt1()
 
     return coco_eval
 
